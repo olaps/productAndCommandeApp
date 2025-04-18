@@ -1,0 +1,79 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-lg mx-auto bg-white rounded-lg shadow-md p-8">
+      <div *ngIf="commande" class="text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Commande confirmée</h1>
+        <p class="text-gray-600 mb-8">Votre commande a été enregistrée avec succès.</p>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-8">
+          <h2 class="text-lg font-semibold mb-4 text-left">Récapitulatif de la commande</h2>
+          
+          <div *ngIf="commande.produit" class="border-b border-gray-200 pb-4 mb-4">
+            <h3 class="font-medium text-left mb-2">Produit</h3>
+            <div class="text-left">
+              <p class="font-medium">{{ commande.produit.nom || 'Non spécifié' }}</p>
+              <p class="text-gray-600 text-sm">Réf: {{ commande.produit.reference || 'Non spécifié' }}</p>
+              <p class="text-gray-600 text-sm">Catégorie: {{ getCategorieDisplayName(commande.produit.categorie) }}</p>
+              <p class="font-medium text-green-600 mt-1">Prix unitaire: {{ commande.produit.prix | currency:'EUR' }}</p>
+            </div>
+          </div>
+          
+          <div class="text-left mb-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-gray-600 text-sm">Quantité:</p>
+                <p class="font-medium">{{ commande.quantite || 0 }}</p>
+              </div>
+              <div>
+                <p class="text-gray-600 text-sm">Prix total:</p>
+                <p class="font-medium">{{ calculateTotal() | currency:'EUR' }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="border-t border-gray-200 pt-4 text-left">
+            <div class="mb-2">
+              <p class="text-gray-600 text-sm">Date de livraison:</p>
+              <p class="font-medium">{{ commande.dateLivraisonSouhaitee | date:'dd/MM/yyyy' }}</p>
+            </div>
+            
+            <div class="mb-2">
+              <p class="text-gray-600 text-sm">Adresse de livraison:</p>
+              <p class="font-medium">{{ commande.adresseLivraison || 'Non spécifiée' }}</p>
+            </div>
+            
+            <div>
+              <p class="text-gray-600 text-sm">Mode de paiement:</p>
+              <p class="font-medium">{{ getModePaiementDisplayName(commande.modePaiement) }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <button routerLink="/produits" 
+                class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+          Retour au catalogue
+        </button>
+      </div>
+      
+      <div *ngIf="!commande" class="text-center">
+        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Aucune commande trouvée</h1>
+        <p class="text-gray-600 mb-8">Aucune information de commande n'est disponible.</p>
+        
+        <button routerLink="/produits" 
+                class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+          Retour au catalogue
+        </button>
+      </div>
+    </div>
+  </div>

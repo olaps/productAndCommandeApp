@@ -1,0 +1,128 @@
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Passer une commande</h1>
+    
+    <app-error-message *ngIf="error" 
+                      [errorCode]="error.code"
+                      [errorMessage]="error.message">
+    </app-error-message>
+    
+    <app-loader *ngIf="loading" [message]="'Chargement des informations produit...'"></app-loader>
+    
+    <div *ngIf="!loading && !error && produit" class="bg-white rounded-lg shadow-md p-6">
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-2">Informations produit</h2>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/2 mb-4 md:mb-0">
+            <p class="text-lg font-medium">{{ produit.nom }}</p>
+            <p class="text-gray-600">Référence: {{ produit.reference }}</p>
+            <p class="text-green-600 font-bold mt-2">{{ produit.prix | currency:'EUR' }}</p>
+            
+            <!-- Infos spécifiques selon la catégorie -->
+            <div class="mt-4" *ngIf="produit.categorie === 'STANDARD' && produit.stock !== undefined">
+              <div class="flex items-center">
+                <span class="inline-block w-3 h-3 rounded-full mr-2" 
+                     [ngClass]="{
+                       'bg-green-500': produit.stock > 5, 
+                       'bg-yellow-500': produit.stock > 0 && produit.stock <= 5, 
+                       'bg-red-500': produit.stock === 0
+                     }">
+                </span>
+                <span class="text-sm text-gray-600">
+                  {{ produit.stock > 0 ? 'En stock (' + produit.stock + ')' : 'Rupture de stock' }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="mt-4" *ngIf="produit.categorie === 'SUR_COMMANDE' && produit.delaiLivraison !== undefined">
+              <div class="flex items-center">
+                <span class="inline-block w-3 h-3 rounded-full bg-indigo-500 mr-2"></span>
+                <span class="text-sm text-gray-600">
+                  Délai de fabrication: {{ produit.delaiLivraison }} jour(s)
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <form [formGroup]="commandeForm" (ngSubmit)="onSubmit()" class="mt-8">
+        <h2 class="text-xl font-semibold mb-4">Détails de la commande</h2>
+        
+        <!-- Quantité -->
+        <div class="mb-4">
+          <label for="quantite" class="block text-sm font-medium text-gray-700 mb-1">Quantité</label>
+          <input type="number" id="quantite" formControlName="quantite" min="1" 
+                 [max]="produit.categorie === 'STANDARD' && produit.stock !== undefined ? produit.stock : 999"
+                 class="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+          <div *ngIf="commandeForm.get('quantite')?.invalid && (commandeForm.get('quantite')?.dirty || commandeForm.get('quantite')?.touched)" 
+               class="text-red-600 text-sm mt-1">
+            <span *ngIf="commandeForm.get('quantite')?.errors?.['required']">La quantité est requise.</span>
+            <span *ngIf="commandeForm.get('quantite')?.errors?.['min']">La quantité doit être d'au moins 1 unité.</span>
+            <span *ngIf="commandeForm.get('quantite')?.errors?.['max'] && produit.stock !== undefined">
+              La quantité ne peut pas dépasser le stock disponible ({{ produit.stock }}).
+            </span>
+          </div>
+        </div>
+        
+        <!-- Date de livraison souhaitée -->
+        <div class="mb-4">
+          <label for="dateLivraisonSouhaitee" class="block text-sm font-medium text-gray-700 mb-1">
+            Date de livraison souhaitée
+          </label>
+          <input type="date" id="dateLivraisonSouhaitee" formControlName="dateLivraisonSouhaitee" 
+                 [min]="formatDate(minDeliveryDate)"
+                 class="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+          <div *ngIf="commandeForm.get('dateLivraisonSouhaitee')?.invalid && (commandeForm.get('dateLivraisonSouhaitee')?.dirty || commandeForm.get('dateLivraisonSouhaitee')?.touched)" 
+               class="text-red-600 text-sm mt-1">
+            Veuillez sélectionner une date de livraison valide.
+          </div>
+          <p class="text-gray-600 text-sm mt-1">
+            Date minimale de livraison: {{ minDeliveryDate | date:'dd/MM/yyyy' }}
+            <span *ngIf="produit.categorie === 'SUR_COMMANDE' && produit.delaiLivraison !== undefined">
+              (basée sur le délai de fabrication de {{ produit.delaiLivraison }} jours)
+            </span>
+          </p>
+        </div>
+        
+        <!-- Adresse de livraison -->
+        <div class="mb-4">
+          <label for="adresseLivraison" class="block text-sm font-medium text-gray-700 mb-1">
+            Adresse de livraison
+          </label>
+          <textarea id="adresseLivraison" formControlName="adresseLivraison" rows="3"
+                   class="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"></textarea>
+          <div *ngIf="commandeForm.get('adresseLivraison')?.invalid && (commandeForm.get('adresseLivraison')?.dirty || commandeForm.get('adresseLivraison')?.touched)" 
+               class="text-red-600 text-sm mt-1">
+            L'adresse de livraison est requise.
+          </div>
+        </div>
+        
+        <!-- Mode de paiement -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Mode de paiement</label>
+          <div class="flex flex-col space-y-2">
+            <div *ngFor="let mode of modesPaiement" class="flex items-center">
+              <input type="radio" [id]="mode" [value]="mode" formControlName="modePaiement"
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+              <label [for]="mode" class="ml-2 text-gray-700">{{ getModePaiementDisplayName(mode) }}</label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Boutons d'action -->
+        <div class="flex justify-between mt-8">
+          <button type="button" routerLink="/produits" 
+                  class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
+            Annuler
+          </button>
+          <button type="submit" 
+                  [disabled]="commandeForm.invalid || submitting || (produit.categorie === 'STANDARD' && produit.stock !== undefined && produit.stock === 0)"
+                  class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': commandeForm.invalid || submitting || (produit.categorie === 'STANDARD' && produit.stock !== undefined && produit.stock === 0)}">
+            <span *ngIf="!submitting">Valider la commande</span>
+            <span *ngIf="submitting">Traitement en cours...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
