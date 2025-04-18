@@ -145,3 +145,15 @@ frontend/
 - Des données de test sont chargées au démarrage pour faciliter les tests
 - L'architecture frontend utilise les composants standalone d'Angular 18
 - Le design est responsive grâce à Tailwind CSS
+
+Capture d'écran de l'application:
+Listes des produits Standard et sur commande:
+![image](https://github.com/user-attachments/assets/ceea0c67-9722-4e3a-81a3-a20139c19365)
+Details d'un produits:
+![image](https://github.com/user-attachments/assets/0f6716d6-c498-4665-b5b4-367b13a69e8c)
+Passer une commande:
+![image](https://github.com/user-attachments/assets/1ec58f6a-40c5-466f-b1b2-b81cc1af23f1)
+Commande confirmée:
+![image](https://github.com/user-attachments/assets/52a1a837-bfc9-48ff-9c3e-be51e1441fd2)
+
+
