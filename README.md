@@ -1,160 +1,147 @@
-# Test Technique Développeur Java/Angular
+# Application de Gestion de Produits et Commandes
 
-## Objectif
-Créer une application de gestion de produits et commandes composée d'un backend en Java 17 et d'un frontend en Angular 18.
-Créer une branche à votre nom et prénom (ex : test/arthur-josseau ) et push sur ce repo. 
-L'utilisation de l'intelligence artificielle est autorisée. 
+Ce projet est une application complète de gestion de produits et commandes avec un backend Java 17/Spring Boot et un frontend Angular 18. L'application permet de gérer différentes catégories de produits (standards et sur commande) et de passer des commandes avec validation des règles métier.
 
-## Livraison attendue
+## Structure du projet
 
-- Code source complet (backend et frontend)
-- Que les projets compilent. Il n'est pas nécessaire qu'ils fonctionnent. (Inutile d'implémenter un H2 ou une base de donnée, inutile de tester si le projet démarre, possibilité de mock pour le backend ou une implémentation de data jpa repository, inutile de passer du temps sur l'intégration entre le back et le front, les contrats d'interfaces et les api suffisent. )
-- Vous serez jugé sur la pertinence des implémentations au vu du temps impartie ( balance qualité / délai ) et sur la quantité de points validés ci-dessous. 
-- Aucunes architectures spécifiques n'est imposée. 
-- Aucunes bonnes pratiques spécifiques n'est imposée. 
+Le projet est divisé en deux parties principales :
 
-## Technologies requises
-- **Backend** : Java 17, Spring Boot
-- **Frontend** : Angular 18, tailwind
-
-## Architecture générale
-L'application sera composée de deux parties distinctes :
-- Un web service RESTful en Java 17 (dossier backend)
-- Une application frontend en Angular 18 (dossier frontend)
-
-## Implémentation actuelle
-- Un projet backend avec Spring Boot et la dépendance starter web
-  - API CRUD pour les produits implémentée (voir détails ci-dessous)
-  - Stockage en mémoire (sans base de données)
-- Un projet frontend vide est déjà à disposition avec Angular 18 et la librairie tailwind
-
-### API Produit implémentée
-Une API CRUD complète pour la gestion des produits a été implémentée dans le backend:
-
-- **GET /api/produits** - Récupérer tous les produits
-- **GET /api/produits/{id}** - Récupérer un produit par son ID
-- **GET /api/produits/grouped-by-categorie** - Récupérer tous les produits groupés par catégorie
-- **POST /api/produits** - Créer un nouveau produit
-- **PUT /api/produits/{id}** - Mettre à jour un produit existant
-- **DELETE /api/produits/{id}** - Supprimer un produit
-
-Pour plus de détails sur l'API, consultez le fichier [backend/README.md](backend/README.md).
-
-## Spécifications fonctionnelles
-
-### 1. Gestion des produits
-
-#### Catégories de produits
-- **Produit standard** : Produit disponible à la vente immédiate
-- **Produit sur commande** : Produit nécessitant un délai de fabrication
-
-#### Structure de données d'un produit
-| Champ       | Type        | Description                                                       |
-| ----------- | ----------- | ----------------------------------------------------------------- |
-| id          | number      | Identifiant unique du produit                                     |
-| nom         | String      | Nom du produit                                                    |
-| reference   | String      | Référence unique du produit                                       |
-| categorie   | Enum        | STANDARD ou SUR_COMMANDE                                          |
-| prix        | Decimal     | Prix unitaire du produit                                          |
-| delaiLivraison | Integer  | Uniquement pour produits sur commande, délai en jours            |
-| stock | Integer  | Uniquement pour produits  standard            |
-
-### 2. Fonctionnalités à implémenter
-
-#### Visualisation des produits
-- **Liste des produits** : Afficher tous les produits, regrouper les produits par catégorie (standard/sur commande)
-- **Vue détaillée** : Page dédiée pour afficher les détails d'un produit spécifique
-
-#### Gestion des commandes
-- **Sélection des produits** : 
-  - Produits à commander
-  - Quantités pour chaque produit
-- **Paramètres de la commande** : 
-  - Date de livraison souhaitée
-  - Adresse de livraison
-  - Mode de paiement (comptant, différé)
-- **Validations** :
-  - Vérification de la disponibilité des produits standards
-  - Respect des délais minimums pour les produits sur commande
-
-#### Gestion des erreurs
-- **Format des erreurs** : 
-  - Code d'erreur codifié (ex: ER012345)
-  - Message descriptif
-- **Types d'erreurs à gérer** :
-  - Produit indisponible
-  - Délai de livraison impossible
-  - Quantité invalide
-  - Erreurs de validation des données (produit inexistant, référence incorrecte)
-
-## Spécifications techniques
-
-### Backend (Java 17)
-
-#### Exemple de structure de réponse pour les produits standards
-```json
-[
-  {
-  "id": 12345678,
-  "nom": "Écran 24 pouces",
-  "reference": "ECR24-2023",
-  "categorie": "STANDARD",
-  "prix": 199.99,
-  "stock": 10
-}
-]
+```
+/
+├── backend/       # API REST en Java 17 et Spring Boot
+└── frontend/      # Interface utilisateur en Angular 18
 ```
 
-#### Exemple de structure de réponse pour les produits sur commande
-```json
-[{
-  "id": 98765432,
-  "nom": "Bureau sur mesure",
-  "reference": "BUR-CUSTOM-2023",
-  "categorie": "SUR_COMMANDE",
-  "prix": 349.99,
-  "delaiLivraison": 15
-}]
+## Fonctionnalités
+
+- Liste des produits regroupés par catégorie
+- Détail d'un produit spécifique
+- Formulaire de commande avec validation des contraintes métier
+- Gestion des stocks pour les produits standards
+- Gestion des délais de livraison pour les produits sur commande
+- Validation complète des données saisies
+- Gestion des erreurs standardisée
+
+## Technologies utilisées
+
+### Backend
+- Java 17
+- Spring Boot
+- Spring Data JPA
+- Spring Validation
+- Lombok
+- Springdoc OpenAPI (Swagger)
+- H2 Database
+
+### Frontend
+- Angular 18
+- TypeScript
+- Tailwind CSS
+- Angular Forms
+- Standalone Components
+
+## Installation et démarrage
+
+### Prérequis
+- Java 17
+- Node.js 18+
+- npm 9+
+- Maven 3.8+
+
+### Backend
+1. Naviguer vers le dossier backend
+2. Exécuter :
+```bash
+mvn spring-boot:run
+```
+L'API sera accessible à l'adresse : http://localhost:8080
+
+Documentation Swagger disponible à : http://localhost:8080/swagger-ui/index.html
+
+### Frontend
+1. Naviguer vers le dossier frontend
+2. Installer les dépendances :
+```bash
+npm install
+```
+3. Démarrer l'application :
+```bash
+ng serve
+```
+L'application sera accessible à l'adresse : http://localhost:4200
+
+## Détails techniques
+
+### Backend
+
+#### Structure du projet backend
+```
+backend/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/gestionproduits/
+│   │   │   ├── config/
+│   │   │   ├── controller/
+│   │   │   ├── dto/
+│   │   │   ├── exception/
+│   │   │   ├── model/
+│   │   │   ├── repository/
+│   │   │   └── service/
+│   │   └── resources/
+│   └── test/
+└── pom.xml
 ```
 
-#### Exemple de structure pour la requête de commande ( les dates peuvent être des timestamps ou des dates )
-```json
-{
-  "produitId": 12345678,
-  "quantite": 2,
-  "dateLivraisonSouhaitee": "2025-05-15",
-  "adresseLivraison": "123 rue des Lilas, 75001 Paris",
-  "modePaiement": "COMPTANT"
-}
+#### API REST endpoints
+- `GET /api/produits` - Liste des produits
+- `GET /api/produits/{id}` - Détail d'un produit
+- `GET /api/produits/grouped-by-categorie` - Produits groupés par catégorie
+- `POST /api/produits` - Créer un produit
+- `PUT /api/produits/{id}` - Mettre à jour un produit
+- `DELETE /api/produits/{id}` - Supprimer un produit
+- `POST /api/commandes` - Créer une commande
+- `GET /api/commandes` - Liste des commandes
+- `GET /api/commandes/{id}` - Détail d'une commande
+
+### Frontend
+
+#### Structure du projet frontend
+```
+frontend/
+├── src/
+│   ├── app/
+│   │   ├── core/
+│   │   │   ├── models/
+│   │   │   ├── services/
+│   │   │   └── interceptors/
+│   │   ├── shared/
+│   │   │   ├── components/
+│   │   │   └── pipes/
+│   │   └── features/
+│   │       ├── produits/
+│   │       └── commandes/
+│   ├── assets/
+│   └── environments/
+└── angular.json
 ```
 
-#### Structure des réponses d'erreur
-```json
-{
-  "code": "ER012345",
-  "message": "Délai de livraison impossible pour le produit Bureau sur mesure"
-}
-```
+#### Routes principales
+- `/produits` - Liste des produits
+- `/produits/:id` - Détail d'un produit
+- `/commander/:produitId` - Formulaire de commande
+- `/confirmation` - Confirmation de commande
 
-### Frontend (Angular 18)
+## Règles métier implémentées
 
-#### Pages à implémenter
-1. **Liste des produits** - Affichage de tous les produits regroupés par catégorie
-2. **Détail d'un produit** - Affichage détaillé des informations d'un produit
-3. **Formulaire de commande** - Interface pour effectuer une commande
+- Les produits standards ont un stock qui diminue lors des commandes
+- Les produits sur commande ont un délai de fabrication
+- Les commandes de produits standards vérifient la disponibilité en stock
+- Les commandes de produits sur commande vérifient le délai minimum de livraison
+- Les dates de livraison sont validées selon le type de produit et ses contraintes
 
-#### Fonctionnalités UI requises
-- Navigation entre les pages
-- Validation côté client
-- Affichage des messages d'erreur
-- Gestion des états de chargement (loader)
+## Remarques
 
-
-## Bonus (optionnel)
-
-- Authentification des utilisateurs
-- Historique des commandes
-- Un parnier avec commande groupé. 
-- Filtres et recherche dans la liste des produits
-- Tests unitaires
-- Documentation API (ex : swagger)
+- L'application utilise une base de données H2 en mémoire pour simplifier le développement
+- Des données de test sont chargées au démarrage pour faciliter les tests
+- L'architecture frontend utilise les composants standalone d'Angular 18
+- Le design est responsive grâce à Tailwind CSS
